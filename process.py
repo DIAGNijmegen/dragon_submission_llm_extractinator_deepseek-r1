@@ -41,7 +41,7 @@ if __name__ == "__main__":
     baseline = DragonBaseline()
     baseline.load()
 
-    jobid = str(baseline.task.jobid).zfill(3)
+    taskname = baseline.task.task_name
 
     synthetic_tasklist = [
         "Task101_Example_sl_bin_clf-fold0",
@@ -91,12 +91,12 @@ if __name__ == "__main__":
     # Find the task name corresponding to the jobid
     task_name = None
     for task in all_tasks:
-        if task.startswith(f"Task{jobid}_"):
+        if task.startswith(f"{taskname}"):
             task_name = task
             break
 
     if task_name is None:
-        raise ValueError(f"No task found for jobid {jobid}")
+        raise ValueError(f"No task found for {taskname}")
 
     is_synthetic = task_name in synthetic_tasklist
     expected_len = len(baseline.df_test)
