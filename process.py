@@ -1,6 +1,4 @@
-import json
-import os
-
+import pandas as pd
 from dragon_baseline import DragonBaseline
 
 
@@ -8,8 +6,7 @@ def load_predictions(task_name, is_synthetic, expected_len):
     if is_synthetic:
         path = f"/opt/app/results/synthetic/{task_name}/nlp-predictions-dataset.json"
         print(f"[Synthetic] Loading predictions from: {path}")
-        with open(path, "r") as f:
-            return json.load(f)
+        return pd.read_json(path)
     else:
         val_path = (
             f"/opt/app/results/validation/{task_name}/nlp-predictions-dataset.json"
@@ -18,10 +15,8 @@ def load_predictions(task_name, is_synthetic, expected_len):
         print(f"[Normal] Trying validation: {val_path}")
         print(f"[Normal] Trying test: {test_path}")
 
-        with open(val_path, "r") as f:
-            val_predictions = json.load(f)
-        with open(test_path, "r") as f:
-            test_predictions = json.load(f)
+        val_predictions = pd.read_json(val_path)
+        test_predictions = pd.read_json(test_path)
 
         # Choose the predictions matching the expected length
         if len(val_predictions) == expected_len:
