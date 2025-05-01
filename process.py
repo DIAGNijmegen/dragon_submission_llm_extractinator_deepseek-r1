@@ -32,6 +32,13 @@ def load_predictions(task_name, is_synthetic, expected_len):
             )
 
 
+def sort_predictions(df):
+    df["case_num"] = df["uid"].str.extract(r"case(\d+)").astype(int)
+    df = df.sort_values("case_num").reset_index(drop=True)
+    df = df.drop(columns="case_num")
+    return df
+
+
 if __name__ == "__main__":
     baseline = DragonBaseline()
     baseline.load()
@@ -96,6 +103,7 @@ if __name__ == "__main__":
     is_synthetic = task_name in synthetic_tasklist
     expected_len = len(baseline.df_test)
     predictions = load_predictions(task_name, is_synthetic, expected_len)
+    predictions = sort_predictions(predictions)
 
     print(f"{task_name}: Loaded {len(predictions)} predictions. Saving...")
 
