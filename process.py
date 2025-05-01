@@ -115,5 +115,12 @@ if __name__ == "__main__":
 
     print(f"{task_name}: Loaded {len(predictions)} predictions. Saving...")
 
+    print(f"Predictions: {predictions.head()}")
+    print(f"Baseline: {baseline.df_test.head()}")
+
+    # Print set of uids in both dataframes
+    print(f"UIDs in predictions: {set(predictions['uid'])}")
+    print(f"UIDs in baseline: {set(baseline.df_test['uid'])}")
+
     baseline.save(predictions)
     baseline.verify_predictions()
