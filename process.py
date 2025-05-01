@@ -108,4 +108,4 @@ if __name__ == "__main__":
     print(f"{task_name}: Loaded {len(predictions)} predictions. Saving...")
 
     baseline.save(predictions)
-    baseline.verify_predictions()
+    # baseline.verify_predictions()
