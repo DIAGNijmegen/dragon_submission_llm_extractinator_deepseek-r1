@@ -42,6 +42,9 @@ def sort_predictions(df):
 if __name__ == "__main__":
     baseline = DragonBaseline()
     baseline.load()
+    baseline.validate()
+    baseline.analyze()
+    baseline.preprocess()
 
     taskname = baseline.task.task_name
 
@@ -113,4 +116,4 @@ if __name__ == "__main__":
     print(f"{task_name}: Loaded {len(predictions)} predictions. Saving...")
 
     baseline.save(predictions)
-    # baseline.verify_predictions()
+    baseline.verify_predictions()
