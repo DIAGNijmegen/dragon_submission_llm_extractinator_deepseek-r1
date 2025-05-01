@@ -105,6 +105,11 @@ if __name__ == "__main__":
     predictions = load_predictions(task_name, is_synthetic, expected_len)
     predictions = sort_predictions(predictions)
 
+    # Cast predictions to the same type as the baseline
+    predictions_list = predictions.to_dict(orient="records")
+    casted_predictions = baseline.cast_predictions(predictions_list)
+    predictions = pd.DataFrame.from_records(casted_predictions)
+
     print(f"{task_name}: Loaded {len(predictions)} predictions. Saving...")
 
     baseline.save(predictions)
