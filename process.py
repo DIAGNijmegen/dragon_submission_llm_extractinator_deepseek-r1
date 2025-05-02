@@ -8,7 +8,9 @@ def load_predictions(task_name, is_synthetic, expected_len):
     if is_synthetic:
         path = f"/opt/app/results/synthetic/{task_name}/nlp-predictions-dataset.json"
         print(f"[Synthetic] Loading predictions from: {path}")
-        return pd.read_json(path)
+        predictions = pd.read_json(path)
+        predictions["uid"] = predictions["uid"].apply(reformat_uids)
+        return predictions
     else:
         val_path = (
             f"/opt/app/results/validation/{task_name}/nlp-predictions-dataset.json"
@@ -116,7 +118,6 @@ if __name__ == "__main__":
     expected_len = len(baseline.df_test)
     predictions = load_predictions(task_name, is_synthetic, expected_len)
     predictions = sort_predictions(predictions)
-    predictions["uid"] = predictions["uid"].apply(reformat_uids)
 
     # Cast predictions to the same type as the baseline
     predictions_list = predictions.to_dict(orient="records")
