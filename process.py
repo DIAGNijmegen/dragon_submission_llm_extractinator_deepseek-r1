@@ -1,3 +1,5 @@
+import re
+
 import pandas as pd
 from dragon_baseline import DragonBaseline
 
@@ -37,6 +39,13 @@ def sort_predictions(df):
     df = df.sort_values("case_num").reset_index(drop=True)
     df = df.drop(columns="case_num")
     return df
+
+
+def reformat_uids(s):
+    match = re.match(r"(Task\d+)_.*_(case\d+)", s)
+    if match:
+        return f"{match.group(1)}_{match.group(2)}"
+    return s
 
 
 if __name__ == "__main__":
@@ -107,6 +116,7 @@ if __name__ == "__main__":
     expected_len = len(baseline.df_test)
     predictions = load_predictions(task_name, is_synthetic, expected_len)
     predictions = sort_predictions(predictions)
+    predictions["uid"] = predictions["uid"].apply(reformat_uids)
 
     # Cast predictions to the same type as the baseline
     predictions_list = predictions.to_dict(orient="records")
