@@ -4,7 +4,7 @@ import pandas as pd
 from dragon_baseline import DragonBaseline
 
 
-def load_predictions(task_name, is_synthetic, expected_len):
+def load_predictions(task_name, is_synthetic, expected_uids):
     if is_synthetic:
         path = f"/opt/app/results/synthetic/{task_name}/nlp-predictions-dataset.json"
         print(f"[Synthetic] Loading predictions from: {path}")
@@ -22,17 +22,19 @@ def load_predictions(task_name, is_synthetic, expected_len):
         val_predictions = pd.read_json(val_path)
         test_predictions = pd.read_json(test_path)
 
-        # Choose the predictions matching the expected length
-        if len(val_predictions) == expected_len:
+        val_uids = set(val_predictions["uid"])
+        test_uids = set(test_predictions["uid"])
+
+        if val_uids == expected_uids:
             print(f"[Normal] Using validation predictions")
             return val_predictions
-        elif len(test_predictions) == expected_len:
+        elif test_uids == expected_uids:
             print(f"[Normal] Using test predictions")
             return test_predictions
         else:
             raise ValueError(
-                f"Prediction count mismatch. Expected {expected_len}, "
-                f"got {len(val_predictions)} (val) and {len(test_predictions)} (test)"
+                f"Prediction UID mismatch.\nExpected UIDs: {expected_uids}\n"
+                f"Val UIDs: {val_uids}\nTest UIDs: {test_uids}"
             )
 
 
@@ -115,8 +117,8 @@ if __name__ == "__main__":
         raise ValueError(f"No task found for {taskname}")
 
     is_synthetic = task_name in synthetic_tasklist
-    expected_len = len(baseline.df_test)
-    predictions = load_predictions(task_name, is_synthetic, expected_len)
+    expected_uids = set(baseline.df_test["uid"])
+    predictions = load_predictions(task_name, is_synthetic, expected_uids)
     predictions = sort_predictions(predictions)
 
     # Cast predictions to the same type as the baseline
